@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Klinik Gigi Sehat</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #f5f7fa; color: #333; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    header { text-align: center; margin-bottom: 30px; padding: 20px; background: #2563eb; color: white; border-radius: 8px; }
+    h1, h2, h3 { margin: 10px 0; }
+    .card { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin: 15px 0; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea, button { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+    textarea { height: 80px; }
+    button { background: #2563eb; color: white; cursor: pointer; font-weight: bold; }
+    button:hover { background: #1d4ed8; }
+    .hidden { display: none !important; }
+    .status-menunggu { color: #f59e0b; }
+    .status-selesai { color: #10b981; }
+    .status-batal { color: #ef4444; }
+    .nav { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+    .nav button { flex: 1; min-width: 100px; font-size: 14px; }
+    .footer { text-align: center; margin-top: 30px; color: #666; }
+    .message { margin-top: 10px; padding: 8px; border-radius: 4px; }
+    .success { background: #d1fae5; color: #065f46; }
+    .error { background: #fee2e2; color: #b91c1c; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🦷 Klinik Gigi Sehat</h1>
+      <p>Sistem Manajemen Janji Temu</p>
+    </header>
+
+    <!-- Login Form -->
+    <div id="loginSection" class="card">
+      <h2>Login</h2>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUsername" placeholder="Masukkan username" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Masukkan password" />
+      </div>
+      <button onclick="login()">MASUK</button>
+      <p id="loginMessage" class="message error hidden"></p>
+    </div>
+
+    <!-- Dashboard Admin -->
+    <div id="adminDashboard" class="card hidden">
+      <div class="nav">
+        <button onclick="showSection('janji-list')">Janji Temu</button>
+        <button onclick="showSection('janji-form')">+ Janji Temu</button>
+        <button onclick="showSection('pasien-list')">Pasien</button>
+        <button onclick="showSection('pasien-form')">+ Pasien</button>
+        <button onclick="showSection('dokter-list')">Dokter</button>
+        <button onclick="showSection('dokter-form')">+ Dokter</button>
+        <button onclick="showSection('tindakan-list')">Tindakan</button>
+        <button onclick="showSection('tindakan-form')">+ Tindakan</button>
+        <button onclick="showSection('rekam-medis-list')">Rekam Medis</button>
+        <button onclick="showSection('rekam-medis-form')">+ Rekam Medis</button>
+        <button onclick="logout()">Keluar</button>
+      </div>
+      <h2>Dashboard Admin</h2>
+      
+      <!-- Janji Temu List -->
+      <div id="janji-list" class="content hidden">
+        <h3>Daftar Janji Temu</h3>
+        <div id="janjiTable"></div>
+      </div>
+
+      <!-- Janji Temu Form -->
+      <div id="janji-form" class="content hidden">
+        <h3>Buat Janji Temu Baru</h3>
+        <div class="form-group">
+          <label>Pasien</label>
+          <select id="janjiPasien"></select>
+        </div>
+        <div class="form-group">
+          <label>Dokter</label>
+          <select id="janjiDokter"></select>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="janjiTanggal" />
+        </div>
+        <div class="form-group">
+          <label>Jam</label>
+          <input type="time" id="janjiJam" />
+        </div>
+        <button onclick="createJanjiTemu()">SIMPAN</button>
+        <p id="janjiMessage" class="message hidden"></p>
+      </div>
+
+      <!-- Pasien List -->
+      <div id="pasien-list" class="content hidden">
+        <h3>Daftar Pasien</h3>
+        <div id="pasienTable"></div>
+      </div>
+
+      <!-- Pasien Form -->
+      <div id="pasien-form" class="content hidden">
+        <h3>Tambah Pasien Baru</h3>
+        <div class="form-group">
+          <label>Nama</label>
+          <input type="text" id="pasienNama" placeholder="Nama lengkap" />
+        </div>
+        <div class="form-group">
+          <label>No. Telepon</label>
+          <input type="text" id="pasienTelepon" placeholder="081234567890" />
+        </div>
+        <div class="form-group">
+          <label>Alamat</label>
+          <input type="text" id="pasienAlamat" placeholder="Alamat lengkap" />
+        </div>
+        <div class="form-group">
+          <label>Tanggal Lahir</label>
+          <input type="date" id="pasienLahir" />
+        </div>
+        <button onclick="createPasien()">SIMPAN</button>
+        <p id="pasienMessage" class="message hidden"></p>
+      </div>
+
+      <!-- Dokter List -->
+      <div id="dokter-list" class="content hidden">
+        <h3>Daftar Dokter</h3>
+        <div id="dokterTable"></div>
+      </div>
+
+      <!-- Dokter Form -->
+      <div id="dokter-form" class="content hidden">
+        <h3>Tambah Dokter Baru</h3>
+        <div class="form-group">
+          <label>Nama</label>
+          <input type="text" id="dokterNama" placeholder="dr. Nama Lengkap" />
+        </div>
+        <div class="form-group">
+          <label>Spesialis</label>
+          <input type="text" id="dokterSpesialis" placeholder="Gigi Anak, Orthodontist, dll" />
+        </div>
+        <div class="form-group">
+          <label>No. Telepon</label>
+          <input type="text" id="dokterTelepon" placeholder="081234567890" />
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="dokterUsername" placeholder="Username untuk login" />
+        </div>
+        <button onclick="createDokter()">SIMPAN</button>
+        <p id="dokterMessage" class="message hidden"></p>
+      </div>
+
+      <!-- Tindakan List -->
+      <div id="tindakan-list" class="content hidden">
+        <h3>Daftar Tindakan</h3>
+        <div id="tindakanTable"></div>
+      </div>
+
+      <!-- Tindakan Form -->
+      <div id="tindakan-form" class="content hidden">
+        <h3>Tambah Tindakan Baru</h3>
+        <div class="form-group">
+          <label>Nama Tindakan</label>
+          <input type="text" id="tindakanNama" placeholder="Scaling, Tambal, dll" />
+        </div>
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <textarea id="tindakanDeskripsi" placeholder="Penjelasan tindakan"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Biaya (Rp)</label>
+          <input type="number" id="tindakanBiaya" placeholder="250000" />
+        </div>
+        <button onclick="createTindakan()">SIMPAN</button>
+        <p id="tindakanMessage" class="message hidden"></p>
+      </div>
+
+      <!-- Rekam Medis List -->
+      <div id="rekam-medis-list" class="content hidden">
+        <h3>Daftar Rekam Medis</h3>
+        <div id="rekamMedisTable"></div>
+      </div>
+
+      <!-- Rekam Medis Form -->
+      <div id="rekam-medis-form" class="content hidden">
+        <h3>Tambah Rekam Medis</h3>
+        <div class="form-group">
+          <label>Pasien</label>
+          <select id="rmPasien"></select>
+        </div>
+        <div class="form-group">
+          <label>Dokter</label>
+          <select id="rmDokter"></select>
+        </div>
+        <div class="form-group">
+          <label>Janji Temu (Opsional)</label>
+          <select id="rmJanji">
+            <option value="">-- Tidak ada --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tindakan (Opsional)</label>
+          <select id="rmTindakan">
+            <option value="">-- Tidak ada --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Catatan Medis</label>
+          <textarea id="rmCatatan" placeholder="Diagnosa, resep, catatan dokter..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Periksa</label>
+          <input type="date" id="rmTanggal" />
+        </div>
+        <button onclick="createRekamMedis()">SIMPAN</button>
+        <p id="rmMessage" class="message hidden"></p>
+      </div>
+    </div>
+
+    <!-- Dashboard Dokter -->
+    <div id="dokterDashboard" class="card hidden">
+      <div class="nav">
+        <button onclick="loadDokterJadwal()">Jadwal Saya</button>
+        <button onclick="showDokterRekamMedis()">Rekam Medis</button>
+        <button onclick="logout()">Keluar</button>
+      </div>
+      <h2>Jadwal & Rekam Medis</h2>
+      <div id="dokterJadwalContainer"></div>
+      <div id="dokterRekamMedisContainer" class="hidden"></div>
+    </div>
+
+    <div class="footer">
+      <p>Frontend lengkap untuk backend API Janji Temu Klinik Gigi</p>
+    </div>
+  </div>
+
+  <script>
+    let API_KEY = '';
+    let USER_ROLE = '';
+    const API_BASE = 'http://localhost:3000/api';
+
+    // === UTILS ===
+    function showMessage(id, text, isError = false) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = `message ${isError ? 'error' : 'success'}`;
+      el.classList.remove('hidden');
+    }
+
+    async function apiFetch(url, options = {}) {
+      const config = {
+        headers: { 'X-API-Key': API_KEY, 'Content-Type': 'application/json' },
+        ...options
+      };
+      return fetch(`${API_BASE}${url}`, config);
+    }
+
+    // === AUTH ===
+    async function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const msg = document.getElementById('loginMessage');
+
+      if (!username || !password) {
+        msg.textContent = 'Username dan password wajib diisi';
+        msg.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          API_KEY = data.api_key;
+          USER_ROLE = data.user.role;
+          document.getElementById('loginSection').classList.add('hidden');
+          
+          if (USER_ROLE === 'admin') {
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            loadData();
+          } else if (USER_ROLE === 'dokter') {
+            document.getElementById('dokterDashboard').classList.remove('hidden');
+            loadDokterJadwal();
+          }
+        } else {
+          showMessage('loginMessage', data.message || 'Login gagal', true);
+        }
+      } catch (err) {
+        showMessage('loginMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function logout() {
+      if (API_KEY) {
+        await fetch(`${API_BASE}/auth/logout`, {
+          method: 'POST',
+          headers: { 'X-API-Key': API_KEY }
+        });
+      }
+      API_KEY = '';
+      USER_ROLE = '';
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('adminDashboard').classList.add('hidden');
+      document.getElementById('dokterDashboard').classList.add('hidden');
+    }
+
+    // === NAVIGATION ===
+    function showSection(sectionId) {
+      // Sembunyikan semua konten
+      document.querySelectorAll('.content').forEach(el => {
+        el.classList.add('hidden');
+      });
+      // Tampilkan yang dipilih
+      document.getElementById(sectionId)?.classList.remove('hidden');
+    }
+
+    // === LOAD DATA ===
+    async function loadData() {
+      try {
+        const [pasien, dokter, tindakan, janji] = await Promise.all([
+          (await apiFetch('/pasien')).json(),
+          (await apiFetch('/dokter')).json(),
+          (await apiFetch('/tindakan')).json(),
+          (await apiFetch('/janji-temu')).json()
+        ]);
+
+        // Render tables
+        renderTable('pasienTable', pasien, ['id', 'nama', 'no_telepon', 'alamat']);
+        renderTable('dokterTable', dokter, ['id', 'nama', 'spesialis', 'no_telepon']);
+        renderTable('tindakanTable', tindakan, ['id', 'nama', 'deskripsi', 'biaya']);
+        renderJanjiTable(janji);
+
+        // Populate dropdowns
+        populateDropdown('janjiPasien', pasien, 'id', 'nama');
+        populateDropdown('janjiDokter', dokter, 'id', 'nama');
+        populateDropdown('rmPasien', pasien, 'id', 'nama');
+        populateDropdown('rmDokter', dokter, 'id', 'nama');
+        populateDropdown('rmJanji', janji, 'id', (j) => `${j.tanggal} - ${j.pasien?.nama || 'Pasien'}`);
+        populateDropdown('rmTindakan', tindakan, 'id', (t) => `${t.nama} (Rp ${t.biaya})`);
+      } catch (err) {
+        console.error('Gagal load data:', err);
+      }
+    }
+
+    function renderTable(containerId, data, fields) {
+      const container = document.getElementById(containerId);
+      if (data.length === 0) {
+        container.innerHTML = '<p>Belum ada data.</p>';
+        return;
+      }
+
+      let html = `<table><thead><tr>`;
+      fields.forEach(f => html += `<th>${f.charAt(0).toUpperCase() + f.slice(1)}</th>`);
+      html += '</tr></thead><tbody>';
+
+      data.forEach(item => {
+        html += '<tr>';
+        fields.forEach(f => {
+          let value = item[f];
+          if (f === 'biaya' && value) value = `Rp ${value.toLocaleString()}`;
+          html += `<td>${value || '-'}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function renderJanjiTable(data) {
+      const container = document.getElementById('janjiTable');
+      if (data.length === 0) {
+        container.innerHTML = '<p>Belum ada janji temu.</p>';
+        return;
+      }
+
+      let html = `<table><thead><tr>
+        <th>Pasien</th><th>Dokter</th><th>Tanggal</th><th>Jam</th><th>Status</th>
+      </tr></thead><tbody>`;
+
+      data.forEach(j => {
+        html += `<tr>
+          <td>${j.pasien?.nama || 'Tidak ditemukan'}</td>
+          <td>${j.dokter?.nama || 'Tidak ditemukan'}</td>
+          <td>${j.tanggal}</td>
+          <td>${j.jam}</td>
+          <td class="status-${j.status}">${j.status}</td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function populateDropdown(selectId, data, valueField, textField) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '';
+      data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item[valueField];
+        option.textContent = typeof textField === 'function' 
+          ? textField(item) 
+          : item[textField];
+        select.appendChild(option);
+      });
+    }
+
+    // === CREATE FUNCTIONS ===
+    async function createPasien() {
+      const data = {
+        nama: document.getElementById('pasienNama').value,
+        no_telepon: document.getElementById('pasienTelepon').value,
+        alamat: document.getElementById('pasienAlamat').value,
+        tanggal_lahir: document.getElementById('pasienLahir').value
+      };
+      if (!data.nama || !data.no_telepon) {
+        showMessage('pasienMessage', 'Nama dan No. Telepon wajib diisi', true);
+        return;
+      }
+      try {
+        const res = await apiFetch('/pasien', { method: 'POST', body: JSON.stringify(data) });
+        if (res.ok) {
+          showMessage('pasienMessage', 'Pasien berhasil ditambahkan');
+          loadData();
+          // Reset form
+          document.getElementById('pasienNama').value = '';
+          document.getElementById('pasienTelepon').value = '';
+          document.getElementById('pasienAlamat').value = '';
+          document.getElementById('pasienLahir').value = '';
+        } else {
+          const err = await res.json();
+          showMessage('pasienMessage', err.message || 'Gagal menambah pasien', true);
+        }
+      } catch (err) {
+        showMessage('pasienMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function createDokter() {
+      const data = {
+        nama: document.getElementById('dokterNama').value,
+        spesialis: document.getElementById('dokterSpesialis').value,
+        no_telepon: document.getElementById('dokterTelepon').value,
+        username: document.getElementById('dokterUsername').value
+      };
+      if (!data.nama || !data.username) {
+        showMessage('dokterMessage', 'Nama dan Username wajib diisi', true);
+        return;
+      }
+      try {
+        const res = await apiFetch('/dokter', { method: 'POST', body: JSON.stringify(data) });
+        const result = await res.json();
+        if (res.ok) {
+          showMessage('dokterMessage', `Dokter berhasil ditambahkan! Password: ${result.akun.password}`);
+          loadData();
+          // Reset form
+          document.getElementById('dokterNama').value = '';
+          document.getElementById('dokterSpesialis').value = '';
+          document.getElementById('dokterTelepon').value = '';
+          document.getElementById('dokterUsername').value = '';
+        } else {
+          showMessage('dokterMessage', result.message || 'Gagal menambah dokter', true);
+        }
+      } catch (err) {
+        showMessage('dokterMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function createJanjiTemu() {
+      const data = {
+        pasien_id: document.getElementById('janjiPasien').value,
+        dokter_id: document.getElementById('janjiDokter').value,
+        tanggal: document.getElementById('janjiTanggal').value,
+        jam: document.getElementById('janjiJam').value
+      };
+      if (!data.pasien_id || !data.dokter_id || !data.tanggal || !data.jam) {
+        showMessage('janjiMessage', 'Semua field wajib diisi', true);
+        return;
+      }
+      try {
+        const res = await apiFetch('/janji-temu', { method: 'POST', body: JSON.stringify(data) });
+        if (res.ok) {
+          showMessage('janjiMessage', 'Janji temu berhasil dibuat');
+          loadData();
+          document.getElementById('janjiTanggal').value = '';
+          document.getElementById('janjiJam').value = '';
+        } else {
+          const err = await res.json();
+          showMessage('janjiMessage', err.message || 'Gagal membuat janji temu', true);
+        }
+      } catch (err) {
+        showMessage('janjiMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function createTindakan() {
+      const data = {
+        nama: document.getElementById('tindakanNama').value,
+        deskripsi: document.getElementById('tindakanDeskripsi').value,
+        biaya: parseFloat(document.getElementById('tindakanBiaya').value) || 0
+      };
+      if (!data.nama) {
+        showMessage('tindakanMessage', 'Nama tindakan wajib diisi', true);
+        return;
+      }
+      try {
+        const res = await apiFetch('/tindakan', { method: 'POST', body: JSON.stringify(data) });
+        if (res.ok) {
+          showMessage('tindakanMessage', 'Tindakan berhasil ditambahkan');
+          loadData();
+          document.getElementById('tindakanNama').value = '';
+          document.getElementById('tindakanDeskripsi').value = '';
+          document.getElementById('tindakanBiaya').value = '';
+        } else {
+          const err = await res.json();
+          showMessage('tindakanMessage', err.message || 'Gagal menambah tindakan', true);
+        }
+      } catch (err) {
+        showMessage('tindakanMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function createRekamMedis() {
+      const data = {
+        pasien_id: document.getElementById('rmPasien').value,
+        dokter_id: document.getElementById('rmDokter').value,
+        catatan: document.getElementById('rmCatatan').value,
+        tanggal: document.getElementById('rmTanggal').value,
+        janji_temu_id: document.getElementById('rmJanji').value || null,
+        tindakan_id: document.getElementById('rmTindakan').value || null
+      };
+      if (!data.pasien_id || !data.dokter_id || !data.catatan || !data.tanggal) {
+        showMessage('rmMessage', 'Pasien, Dokter, Catatan, dan Tanggal wajib diisi', true);
+        return;
+      }
+      // Hapus null
+      if (data.janji_temu_id === 'null') delete data.janji_temu_id;
+      if (data.tindakan_id === 'null') delete data.tindakan_id;
+
+      try {
+        const res = await apiFetch('/rekam-medis', { method: 'POST', body: JSON.stringify(data) });
+        if (res.ok) {
+          showMessage('rmMessage', 'Rekam medis berhasil ditambahkan');
+          loadData();
+          document.getElementById('rmCatatan').value = '';
+          document.getElementById('rmTanggal').value = '';
+        } else {
+          const err = await res.json();
+          showMessage('rmMessage', err.message || 'Gagal menambah rekam medis', true);
+        }
+      } catch (err) {
+        showMessage('rmMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    // === DOKTER ===
+    async function loadDokterJadwal() {
+      try {
+        const res = await apiFetch('/janji-temu/dokter/jadwal');
+        const data = await res.json();
+        const container = document.getElementById('dokterJadwalContainer');
+        const rmContainer = document.getElementById('dokterRekamMedisContainer');
+        rmContainer.classList.add('hidden');
+        
+        if (data.length === 0) {
+          container.innerHTML = '<p>Belum ada janji temu.</p>';
+          return;
+        }
+
+        let html = `<h3>Jadwal Janji Temu Saya</h3><table><thead><tr>
+          <th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Status</th>
+        </tr></thead><tbody>`;
+
+        data.forEach(j => {
+          html += `<tr>
+            <td>${j.tanggal}</td>
+            <td>${j.jam}</td>
+            <td>${j.pasien?.nama || 'Tidak ditemukan'}</td>
+            <td class="status-${j.status}">${j.status}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = '<p>Gagal memuat jadwal.</p>';
+        console.error(err);
+      }
+    }
+
+    function showDokterRekamMedis() {
+      document.getElementById('dokterJadwalContainer').innerHTML = '';
+      const container = document.getElementById('dokterRekamMedisContainer');
+      container.classList.remove('hidden');
+      container.innerHTML = `
+        <h3>Rekam Medis Pasien</h3>
+        <p>Fitur ini memungkinkan dokter melihat/membuat rekam medis pasien setelah janji temu.</p>
+        <p><em>(Implementasi penuh bisa dikembangkan lebih lanjut)</em></p>
+      `;
+    }
+
+    // === INISIALISASI ===
+    // Pastikan CORS diaktifkan di backend!
+  </script>
+</body>
+</html>
