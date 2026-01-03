@@ -36,15 +36,16 @@ const requireDokter = (req, res, next) => {
 // 22. GET /janji-temu — Lihat semua janji temu (Admin)
 exports.getAllJanjiTemu = async (req, res) => {
   try {
-    const janjiTemu = await JanjiTemu.findAll({
+    const janji = await JanjiTemu.findAll({
       include: [
-        { model: Pasien, attributes: ['id', 'nama', 'no_telepon'] },
-        { model: Dokter, attributes: ['id', 'nama', 'spesialis'] }
+        { model: Pasien, as: 'pasien' },   // ← Gunakan instance yang sudah diimport
+        { model: Dokter, as: 'dokter' }     // ← Gunakan instance yang sudah diimport
       ],
       order: [['tanggal', 'ASC'], ['jam', 'ASC']]
     });
-    res.json(janjiTemu);
+    res.json(janji);
   } catch (err) {
+    console.error('Error getAllJanjiTemu:', err); // Tambahkan log
     res.status(500).json({ message: err.message });
   }
 };
@@ -211,30 +212,25 @@ exports.searchJanjiTemu = async (req, res) => {
 // 28. GET /janji-temu/dokter/jadwal — Lihat jadwal dokter yang sedang login (Dokter)
 exports.getDokterJadwal = async (req, res) => {
   try {
-    // Ambil dokter_id dari user yang sedang login
-    // Asumsi: di database, user (role=dokter) punya kolom `dokter_id` yang menghubungkan ke tabel dokter
-    // Jika tidak, Anda perlu simpan `dokter_id` di tabel `users`
-
-    // ⚠️ Jika Anda tidak punya kolom `dokter_id` di `users`, Anda harus tambahkan!
-    // Atau, simpan `dokter_id` langsung di `req.user.dokter_id` saat login
-
-    const dokterId = req.user.dokter_id; // HARUS ADA kolom ini di tabel users
+    const dokterId = req.user.dokter_id;
 
     if (!dokterId) {
-      return res.status(400).json({ message: 'Akun dokter tidak terhubung ke data dokter' });
+      return res.status(400).json({
+        message: 'Akun dokter belum terhubung dengan data dokter'
+      });
     }
 
     const jadwal = await JanjiTemu.findAll({
       where: { dokter_id: dokterId },
       include: [
-        { model: Pasien, attributes: ['id', 'nama', 'no_telepon'] }
-        // Tidak perlu include dokter lagi karena sudah tahu dirinya sendiri
+        { model: Pasien, as: 'pasien', attributes: ['id', 'nama', 'no_telepon'] }
       ],
       order: [['tanggal', 'ASC'], ['jam', 'ASC']]
     });
 
     res.json(jadwal);
   } catch (err) {
+    console.error('ERROR getDokterJadwal:', err);
     res.status(500).json({ message: err.message });
   }
 };

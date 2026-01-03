@@ -7,41 +7,138 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
     body { background: #f5f7fa; color: #333; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-    header { text-align: center; margin-bottom: 30px; padding: 20px; background: #2563eb; color: white; border-radius: 8px; }
-    h1, h2, h3 { margin: 10px 0; }
-    .card { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .container { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      background: #1e40af;
+      color: white;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #3b82f6;
+      text-align: center;
+    }
+    .sidebar-header h2 { font-size: 18px; }
+    .sidebar-menu { padding: 10px 0; }
+    .sidebar-menu button {
+      width: calc(100% - 40px);
+      margin: 4px 20px;
+      padding: 10px;
+      background: transparent;
+      color: white;
+      border: 1px solid #3b82f6;
+      border-radius: 4px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .sidebar-menu button:hover, .sidebar-menu button.active {
+      background: #3b82f6;
+    }
+    .sidebar-logout {
+      margin-top: auto;
+      padding: 0 20px;
+    }
+    .sidebar-logout button {
+      width: 100%;
+      padding: 10px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #2563eb;
+      color: white;
+      border-radius: 8px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
     .form-group { margin: 15px 0; }
     label { display: block; margin-bottom: 5px; font-weight: bold; }
     input, select, textarea, button { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
     textarea { height: 80px; }
-    button { background: #2563eb; color: white; cursor: pointer; font-weight: bold; }
-    button:hover { background: #1d4ed8; }
+    .primary-btn {
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+    }
+    .primary-btn:hover { background: #1d4ed8; }
     .hidden { display: none !important; }
     .status-menunggu { color: #f59e0b; }
     .status-selesai { color: #10b981; }
     .status-batal { color: #ef4444; }
-    .nav { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
-    .nav button { flex: 1; min-width: 100px; font-size: 14px; }
-    .footer { text-align: center; margin-top: 30px; color: #666; }
     .message { margin-top: 10px; padding: 8px; border-radius: 4px; }
     .success { background: #d1fae5; color: #065f46; }
     .error { background: #fee2e2; color: #b91c1c; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
     th { background: #f1f5f9; }
+    .footer { text-align: center; margin-top: 30px; color: #666; }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f7fa;
+      padding: 20px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .register-link {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .register-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🦷 Klinik Gigi Sehat</h1>
-      <p>Sistem Manajemen Janji Temu</p>
-    </header>
-
-    <!-- Login Form -->
-    <div id="loginSection" class="card">
-      <h2>Login</h2>
+  <!-- Login -->
+  <div id="loginPage" class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🦷 Klinik Gigi Sehat</h1>
+        <p>Sistem Manajemen Janji Temu</p>
+      </div>
       <div class="form-group">
         <label>Username</label>
         <input type="text" id="loginUsername" placeholder="Masukkan username" />
@@ -50,195 +147,215 @@
         <label>Password</label>
         <input type="password" id="loginPassword" placeholder="Masukkan password" />
       </div>
-      <button onclick="login()">MASUK</button>
+      <button class="primary-btn" onclick="login()">MASUK</button>
       <p id="loginMessage" class="message error hidden"></p>
-    </div>
-
-    <!-- Dashboard Admin -->
-    <div id="adminDashboard" class="card hidden">
-      <div class="nav">
-        <button onclick="showSection('janji-list')">Janji Temu</button>
-        <button onclick="showSection('janji-form')">+ Janji Temu</button>
-        <button onclick="showSection('pasien-list')">Pasien</button>
-        <button onclick="showSection('pasien-form')">+ Pasien</button>
-        <button onclick="showSection('dokter-list')">Dokter</button>
-        <button onclick="showSection('dokter-form')">+ Dokter</button>
-        <button onclick="showSection('tindakan-list')">Tindakan</button>
-        <button onclick="showSection('tindakan-form')">+ Tindakan</button>
-        <button onclick="showSection('rekam-medis-list')">Rekam Medis</button>
-        <button onclick="showSection('rekam-medis-form')">+ Rekam Medis</button>
-        <button onclick="logout()">Keluar</button>
-      </div>
-      <h2>Dashboard Admin</h2>
-      
-      <!-- Janji Temu List -->
-      <div id="janji-list" class="content hidden">
-        <h3>Daftar Janji Temu</h3>
-        <div id="janjiTable"></div>
-      </div>
-
-      <!-- Janji Temu Form -->
-      <div id="janji-form" class="content hidden">
-        <h3>Buat Janji Temu Baru</h3>
-        <div class="form-group">
-          <label>Pasien</label>
-          <select id="janjiPasien"></select>
-        </div>
-        <div class="form-group">
-          <label>Dokter</label>
-          <select id="janjiDokter"></select>
-        </div>
-        <div class="form-group">
-          <label>Tanggal</label>
-          <input type="date" id="janjiTanggal" />
-        </div>
-        <div class="form-group">
-          <label>Jam</label>
-          <input type="time" id="janjiJam" />
-        </div>
-        <button onclick="createJanjiTemu()">SIMPAN</button>
-        <p id="janjiMessage" class="message hidden"></p>
-      </div>
-
-      <!-- Pasien List -->
-      <div id="pasien-list" class="content hidden">
-        <h3>Daftar Pasien</h3>
-        <div id="pasienTable"></div>
-      </div>
-
-      <!-- Pasien Form -->
-      <div id="pasien-form" class="content hidden">
-        <h3>Tambah Pasien Baru</h3>
-        <div class="form-group">
-          <label>Nama</label>
-          <input type="text" id="pasienNama" placeholder="Nama lengkap" />
-        </div>
-        <div class="form-group">
-          <label>No. Telepon</label>
-          <input type="text" id="pasienTelepon" placeholder="081234567890" />
-        </div>
-        <div class="form-group">
-          <label>Alamat</label>
-          <input type="text" id="pasienAlamat" placeholder="Alamat lengkap" />
-        </div>
-        <div class="form-group">
-          <label>Tanggal Lahir</label>
-          <input type="date" id="pasienLahir" />
-        </div>
-        <button onclick="createPasien()">SIMPAN</button>
-        <p id="pasienMessage" class="message hidden"></p>
-      </div>
-
-      <!-- Dokter List -->
-      <div id="dokter-list" class="content hidden">
-        <h3>Daftar Dokter</h3>
-        <div id="dokterTable"></div>
-      </div>
-
-      <!-- Dokter Form -->
-      <div id="dokter-form" class="content hidden">
-        <h3>Tambah Dokter Baru</h3>
-        <div class="form-group">
-          <label>Nama</label>
-          <input type="text" id="dokterNama" placeholder="dr. Nama Lengkap" />
-        </div>
-        <div class="form-group">
-          <label>Spesialis</label>
-          <input type="text" id="dokterSpesialis" placeholder="Gigi Anak, Orthodontist, dll" />
-        </div>
-        <div class="form-group">
-          <label>No. Telepon</label>
-          <input type="text" id="dokterTelepon" placeholder="081234567890" />
-        </div>
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="dokterUsername" placeholder="Username untuk login" />
-        </div>
-        <button onclick="createDokter()">SIMPAN</button>
-        <p id="dokterMessage" class="message hidden"></p>
-      </div>
-
-      <!-- Tindakan List -->
-      <div id="tindakan-list" class="content hidden">
-        <h3>Daftar Tindakan</h3>
-        <div id="tindakanTable"></div>
-      </div>
-
-      <!-- Tindakan Form -->
-      <div id="tindakan-form" class="content hidden">
-        <h3>Tambah Tindakan Baru</h3>
-        <div class="form-group">
-          <label>Nama Tindakan</label>
-          <input type="text" id="tindakanNama" placeholder="Scaling, Tambal, dll" />
-        </div>
-        <div class="form-group">
-          <label>Deskripsi</label>
-          <textarea id="tindakanDeskripsi" placeholder="Penjelasan tindakan"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Biaya (Rp)</label>
-          <input type="number" id="tindakanBiaya" placeholder="250000" />
-        </div>
-        <button onclick="createTindakan()">SIMPAN</button>
-        <p id="tindakanMessage" class="message hidden"></p>
-      </div>
-
-      <!-- Rekam Medis List -->
-      <div id="rekam-medis-list" class="content hidden">
-        <h3>Daftar Rekam Medis</h3>
-        <div id="rekamMedisTable"></div>
-      </div>
-
-      <!-- Rekam Medis Form -->
-      <div id="rekam-medis-form" class="content hidden">
-        <h3>Tambah Rekam Medis</h3>
-        <div class="form-group">
-          <label>Pasien</label>
-          <select id="rmPasien"></select>
-        </div>
-        <div class="form-group">
-          <label>Dokter</label>
-          <select id="rmDokter"></select>
-        </div>
-        <div class="form-group">
-          <label>Janji Temu (Opsional)</label>
-          <select id="rmJanji">
-            <option value="">-- Tidak ada --</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tindakan (Opsional)</label>
-          <select id="rmTindakan">
-            <option value="">-- Tidak ada --</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Catatan Medis</label>
-          <textarea id="rmCatatan" placeholder="Diagnosa, resep, catatan dokter..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Tanggal Periksa</label>
-          <input type="date" id="rmTanggal" />
-        </div>
-        <button onclick="createRekamMedis()">SIMPAN</button>
-        <p id="rmMessage" class="message hidden"></p>
+      <div class="login-footer">
+        Belum punya akun? <a href="#" onclick="showRegister()" class="register-link">Daftar Admin</a>
       </div>
     </div>
+  </div>
 
-    <!-- Dashboard Dokter -->
-    <div id="dokterDashboard" class="card hidden">
-      <div class="nav">
-        <button onclick="loadDokterJadwal()">Jadwal Saya</button>
-        <button onclick="showDokterRekamMedis()">Rekam Medis</button>
-        <button onclick="logout()">Keluar</button>
+  <!-- Register -->
+  <div id="registerPage" class="login-container hidden">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>📝 Daftar Admin Baru</h1>
+        <p>Buat akun admin pertama</p>
       </div>
-      <h2>Jadwal & Rekam Medis</h2>
-      <div id="dokterJadwalContainer"></div>
-      <div id="dokterRekamMedisContainer" class="hidden"></div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="regUsername" placeholder="Masukkan username" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Masukkan password" />
+      </div>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regNamaLengkap" placeholder="Contoh: Admin Klinik" />
+      </div>
+      <button class="primary-btn" onclick="registerAdmin()">DAFTAR</button>
+      <p id="registerMessage" class="message hidden"></p>
+      <div class="login-footer">
+        Sudah punya akun? <a href="#" onclick="showLogin()" class="register-link">Login</a>
+      </div>
     </div>
+  </div>
 
-    <div class="footer">
-      <p>Frontend lengkap untuk backend API Janji Temu Klinik Gigi</p>
+  <!-- Dashboard -->
+  <div id="dashboardPage" class="hidden">
+    <div class="container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h2>🦷 Klinik Gigi Sehat</h2>
+          <p>Admin Dashboard</p>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu"></div>
+        <div class="sidebar-logout">
+          <button onclick="logout()">Keluar</button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <header>
+          <h1>Sistem Manajemen Janji Temu</h1>
+        </header>
+
+        <!-- PASIEN -->
+        <div id="section-pasien" class="hidden">
+          <div class="card">
+            <h2>👥 Pasien</h2>
+            <h3>Tambah Pasien Baru</h3>
+            <div class="form-group">
+              <label>Nama</label>
+              <input type="text" id="pasienNama" placeholder="Nama lengkap" />
+            </div>
+            <div class="form-group">
+              <label>No. Telepon</label>
+              <input type="text" id="pasienTelepon" placeholder="081234567890" />
+            </div>
+            <div class="form-group">
+              <label>Alamat</label>
+              <input type="text" id="pasienAlamat" placeholder="Alamat lengkap" />
+            </div>
+            <div class="form-group">
+              <label>Tanggal Lahir</label>
+              <input type="date" id="pasienLahir" />
+            </div>
+            <button class="primary-btn" onclick="createPasien()">+ Tambah Pasien</button>
+            <p id="pasienMessage" class="message hidden"></p>
+
+            <h3>Daftar Pasien</h3>
+            <div id="pasienTable"></div>
+          </div>
+        </div>
+
+        <!-- DOKTER -->
+        <div id="section-dokter" class="hidden">
+          <div class="card">
+            <h2>👨‍⚕️ Dokter</h2>
+            <h3>Tambah Dokter Baru</h3>
+            <div class="form-group">
+              <label>Nama</label>
+              <input type="text" id="dokterNama" placeholder="dr. Nama Lengkap" />
+            </div>
+            <div class="form-group">
+              <label>Spesialis</label>
+              <input type="text" id="dokterSpesialis" placeholder="Gigi Anak, Orthodontist, dll" />
+            </div>
+            <div class="form-group">
+              <label>No. Telepon</label>
+              <input type="text" id="dokterTelepon" placeholder="081234567890" />
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="dokterUsername" placeholder="Username untuk login" />
+            </div>
+            <button class="primary-btn" onclick="createDokter()">+ Tambah Dokter</button>
+            <p id="dokterMessage" class="message hidden"></p>
+
+            <h3>Daftar Dokter</h3>
+            <div id="dokterTable"></div>
+          </div>
+        </div>
+
+        <!-- JANJI TEMU -->
+        <div id="section-janji" class="hidden">
+          <div class="card">
+            <h2>📅 Janji Temu</h2>
+            <h3>Buat Janji Temu Baru</h3>
+            <div class="form-group">
+              <label>Pasien</label>
+              <select id="janjiPasien"></select>
+            </div>
+            <div class="form-group">
+              <label>Dokter</label>
+              <select id="janjiDokter"></select>
+            </div>
+            <div class="form-group">
+              <label>Tanggal</label>
+              <input type="date" id="janjiTanggal" />
+            </div>
+            <div class="form-group">
+              <label>Jam</label>
+              <input type="time" id="janjiJam" />
+            </div>
+            <button class="primary-btn" onclick="createJanjiTemu()">+ Tambah Janji Temu</button>
+            <p id="janjiMessage" class="message hidden"></p>
+
+            <h3>Daftar Janji Temu</h3>
+            <div id="janjiTable"></div>
+          </div>
+        </div>
+
+        <!-- TINDAKAN -->
+        <div id="section-tindakan" class="hidden">
+          <div class="card">
+            <h2>⚕️ Tindakan</h2>
+            <h3>Tambah Tindakan Baru</h3>
+            <div class="form-group">
+              <label>Nama Tindakan</label>
+              <input type="text" id="tindakanNama" placeholder="Scaling, Tambal, dll" />
+            </div>
+            <div class="form-group">
+              <label>Deskripsi</label>
+              <textarea id="tindakanDeskripsi" placeholder="Penjelasan tindakan"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Biaya (Rp)</label>
+              <input type="number" id="tindakanBiaya" placeholder="250000" />
+            </div>
+            <button class="primary-btn" onclick="createTindakan()">+ Tambah Tindakan</button>
+            <p id="tindakanMessage" class="message hidden"></p>
+
+            <h3>Daftar Tindakan</h3>
+            <div id="tindakanTable"></div>
+          </div>
+        </div>
+
+        <!-- REKAM MEDIS -->
+        <div id="section-rekam-medis" class="hidden">
+          <div class="card">
+            <h2>📋 Rekam Medis</h2>
+            <h3>Tambah Rekam Medis Baru</h3>
+            <div class="form-group">
+              <label>Pasien</label>
+              <select id="rmPasien"></select>
+            </div>
+            <div class="form-group">
+              <label>Dokter</label>
+              <select id="rmDokter"></select>
+            </div>
+            <div class="form-group">
+              <label>Janji Temu (Opsional)</label>
+              <select id="rmJanji">
+                <option value="">-- Tidak ada --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tindakan (Opsional)</label>
+              <select id="rmTindakan">
+                <option value="">-- Tidak ada --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Catatan Medis</label>
+              <textarea id="rmCatatan" placeholder="Diagnosa, resep, catatan dokter..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Tanggal Periksa</label>
+              <input type="date" id="rmTanggal" />
+            </div>
+            <button class="primary-btn" onclick="createRekamMedis()">+ Tambah Rekam Medis</button>
+            <p id="rmMessage" class="message hidden"></p>
+
+            <h3>Daftar Rekam Medis</h3>
+            <div id="rekamMedisTable"></div>
+          </div>
+        </div>
+
+        
+      </div>
     </div>
   </div>
 
@@ -250,9 +367,11 @@
     // === UTILS ===
     function showMessage(id, text, isError = false) {
       const el = document.getElementById(id);
+      if (!el) return;
       el.textContent = text;
       el.className = `message ${isError ? 'error' : 'success'}`;
       el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 5000);
     }
 
     async function apiFetch(url, options = {}) {
@@ -270,8 +389,7 @@
       const msg = document.getElementById('loginMessage');
 
       if (!username || !password) {
-        msg.textContent = 'Username dan password wajib diisi';
-        msg.classList.remove('hidden');
+        showMessage('loginMessage', 'Username dan password wajib diisi', true);
         return;
       }
 
@@ -286,13 +404,14 @@
         if (res.ok) {
           API_KEY = data.api_key;
           USER_ROLE = data.user.role;
-          document.getElementById('loginSection').classList.add('hidden');
+          document.getElementById('loginPage').classList.add('hidden');
+          document.getElementById('dashboardPage').classList.remove('hidden');
           
           if (USER_ROLE === 'admin') {
-            document.getElementById('adminDashboard').classList.remove('hidden');
-            loadData();
+            renderSidebar('admin');
+            loadAllData();
           } else if (USER_ROLE === 'dokter') {
-            document.getElementById('dokterDashboard').classList.remove('hidden');
+            renderSidebar('dokter');
             loadDokterJadwal();
           }
         } else {
@@ -301,6 +420,51 @@
       } catch (err) {
         showMessage('loginMessage', 'Gagal terhubung ke server', true);
       }
+    }
+
+    async function registerAdmin() {
+      const username = document.getElementById('regUsername').value;
+      const password = document.getElementById('regPassword').value;
+      const nama_lengkap = document.getElementById('regNamaLengkap').value;
+
+      if (!username || !password || !nama_lengkap) {
+        showMessage('registerMessage', 'Semua field wajib diisi', true);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, nama_lengkap, role: 'admin' })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showMessage('registerMessage', 'Admin berhasil didaftarkan! Silakan login.', false);
+          setTimeout(() => {
+            showLogin();
+            document.getElementById('loginUsername').value = username;
+            document.getElementById('loginPassword').value = password;
+          }, 2000);
+        } else {
+          showMessage('registerMessage', data.message || 'Gagal mendaftarkan admin', true);
+        }
+      } catch (err) {
+        showMessage('registerMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    function showLogin() {
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('registerPage').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.add('hidden');
+    }
+
+    function showRegister() {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('registerPage').classList.remove('hidden');
+      document.getElementById('dashboardPage').classList.add('hidden');
     }
 
     async function logout() {
@@ -312,68 +476,166 @@
       }
       API_KEY = '';
       USER_ROLE = '';
-      document.getElementById('loginSection').classList.remove('hidden');
-      document.getElementById('adminDashboard').classList.add('hidden');
-      document.getElementById('dokterDashboard').classList.add('hidden');
+      document.getElementById('dashboardPage').classList.add('hidden');
+      showLogin();
+      document.getElementById('sidebarMenu').innerHTML = '';
     }
 
-    // === NAVIGATION ===
-    function showSection(sectionId) {
-      // Sembunyikan semua konten
-      document.querySelectorAll('.content').forEach(el => {
-        el.classList.add('hidden');
-      });
-      // Tampilkan yang dipilih
-      document.getElementById(sectionId)?.classList.remove('hidden');
-    }
-
-    // === LOAD DATA ===
-    async function loadData() {
-      try {
-        const [pasien, dokter, tindakan, janji] = await Promise.all([
-          (await apiFetch('/pasien')).json(),
-          (await apiFetch('/dokter')).json(),
-          (await apiFetch('/tindakan')).json(),
-          (await apiFetch('/janji-temu')).json()
-        ]);
-
-        // Render tables
-        renderTable('pasienTable', pasien, ['id', 'nama', 'no_telepon', 'alamat']);
-        renderTable('dokterTable', dokter, ['id', 'nama', 'spesialis', 'no_telepon']);
-        renderTable('tindakanTable', tindakan, ['id', 'nama', 'deskripsi', 'biaya']);
-        renderJanjiTable(janji);
-
-        // Populate dropdowns
-        populateDropdown('janjiPasien', pasien, 'id', 'nama');
-        populateDropdown('janjiDokter', dokter, 'id', 'nama');
-        populateDropdown('rmPasien', pasien, 'id', 'nama');
-        populateDropdown('rmDokter', dokter, 'id', 'nama');
-        populateDropdown('rmJanji', janji, 'id', (j) => `${j.tanggal} - ${j.pasien?.nama || 'Pasien'}`);
-        populateDropdown('rmTindakan', tindakan, 'id', (t) => `${t.nama} (Rp ${t.biaya})`);
-      } catch (err) {
-        console.error('Gagal load data:', err);
+    // === SIDEBAR ===
+    function renderSidebar(role) {
+      const menu = document.getElementById('sidebarMenu');
+      if (role === 'admin') {
+        menu.innerHTML = `
+          <button onclick="showSection('pasien')">Pasien</button>
+          <button onclick="showSection('dokter')">Dokter</button>
+          <button onclick="showSection('janji')">Janji Temu</button>
+          <button onclick="showSection('tindakan')">Tindakan</button>
+          <button onclick="showSection('rekam-medis')">Rekam Medis</button>
+        `;
+        showSection('pasien'); // default buka pasien
+      } else if (role === 'dokter') {
+        menu.innerHTML = `<button onclick="loadDokterJadwal()">Jadwal Saya</button>`;
+        loadDokterJadwal();
       }
     }
 
-    function renderTable(containerId, data, fields) {
-      const container = document.getElementById(containerId);
+    // === NAVIGASI ===
+    function showSection(sectionId) {
+      // Sembunyikan semua
+      document.getElementById('section-pasien').classList.add('hidden');
+      document.getElementById('section-dokter').classList.add('hidden');
+      document.getElementById('section-janji').classList.add('hidden');
+      document.getElementById('section-tindakan').classList.add('hidden');
+      document.getElementById('section-rekam-medis').classList.add('hidden');
+
+      // Tampilkan yang dipilih
+      document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+
+      // Load data untuk section ini
+      loadDataForSection(sectionId);
+    }
+
+    // === LOAD DATA PER SECTION ===
+    async function loadDataForSection(section) {
+      try {
+        switch(section) {
+          case 'pasien':
+            const pasien = await (await apiFetch('/pasien')).json();
+            renderPasienTable(pasien);
+            break;
+          case 'dokter':
+            const dokter = await (await apiFetch('/dokter')).json();
+            renderDokterTable(dokter);
+            break;
+          case 'janji':
+            const [p1, d1, j1] = await Promise.all([
+              apiFetch('/pasien').then(r => r.json()),
+              apiFetch('/dokter').then(r => r.json()),
+              apiFetch('/janji-temu').then(r => r.json())
+            ]);
+            renderJanjiTable(j1);
+            populateDropdown('janjiPasien', p1, 'id', 'nama');
+            populateDropdown('janjiDokter', d1, 'id', 'nama');
+            break;
+          case 'tindakan':
+            const tindakan = await (await apiFetch('/tindakan')).json();
+            renderTindakanTable(tindakan);
+            break;
+          case 'rekam-medis':
+            const [p2, d2, j2, t2, r2] = await Promise.all([
+              apiFetch('/pasien').then(r => r.json()),
+              apiFetch('/dokter').then(r => r.json()),
+              apiFetch('/janji-temu').then(r => r.json()),
+              apiFetch('/tindakan').then(r => r.json()),
+              apiFetch('/rekam-medis').then(r => r.json())
+            ]);
+            renderRekamMedisTable(r2);
+            populateDropdown('rmPasien', p2, 'id', 'nama');
+            populateDropdown('rmDokter', d2, 'id', 'nama');
+            populateDropdown('rmJanji', j2, 'id', j => `${j.tanggal} - ${j.pasien?.nama || 'Pasien'}`);
+            populateDropdown('rmTindakan', t2, 'id', t => `${t.nama} (Rp ${t.biaya})`);
+            break;
+        }
+      } catch (err) {
+        console.error('Gagal load data untuk', section, err);
+      }
+    }
+
+    async function loadAllData() {
+      // Tidak dipakai — karena kita load per section
+    }
+
+    // === RENDER TABLES ===
+    function renderPasienTable(data) {
+      const container = document.getElementById('pasienTable');
+      if (!container) return;
       if (data.length === 0) {
-        container.innerHTML = '<p>Belum ada data.</p>';
+        container.innerHTML = '<p>Belum ada pasien.</p>';
         return;
       }
 
-      let html = `<table><thead><tr>`;
-      fields.forEach(f => html += `<th>${f.charAt(0).toUpperCase() + f.slice(1)}</th>`);
-      html += '</tr></thead><tbody>';
+      let html = `<table><thead><tr><th>ID</th><th>Nama</th><th>No. Telepon</th><th>Alamat</th><th>Aksi</th></tr></thead><tbody>`;
+      data.forEach(p => {
+        html += `<tr>
+          <td>${p.id}</td>
+          <td>${p.nama}</td>
+          <td>${p.no_telepon}</td>
+          <td>${p.alamat || '-'}</td>
+          <td>
+            <button class="primary-btn" style="background:#f59e0b; font-size:12px; padding:4px 8px;" onclick="editPasien(${p.id})">Edit</button>
+            <button class="primary-btn" style="background:#ef4444; font-size:12px; padding:4px 8px; margin-top:4px;" onclick="deletePasien(${p.id})">Hapus</button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
 
-      data.forEach(item => {
-        html += '<tr>';
-        fields.forEach(f => {
-          let value = item[f];
-          if (f === 'biaya' && value) value = `Rp ${value.toLocaleString()}`;
-          html += `<td>${value || '-'}</td>`;
-        });
-        html += '</tr>';
+    function renderDokterTable(data) {
+      const container = document.getElementById('dokterTable');
+      if (!container) return;
+      if (data.length === 0) {
+        container.innerHTML = '<p>Belum ada dokter.</p>';
+        return;
+      }
+
+      let html = `<table><thead><tr><th>ID</th><th>Nama</th><th>Spesialis</th><th>No. Telepon</th><th>Aksi</th></tr></thead><tbody>`;
+      data.forEach(d => {
+        html += `<tr>
+          <td>${d.id}</td>
+          <td>${d.nama}</td>
+          <td>${d.spesialis || '-'}</td>
+          <td>${d.no_telepon || '-'}</td>
+          <td>
+            <button class="primary-btn" style="background:#f59e0b; font-size:12px; padding:4px 8px;" onclick="editDokter(${d.id})">Edit</button>
+            <button class="primary-btn" style="background:#ef4444; font-size:12px; padding:4px 8px; margin-top:4px;" onclick="deleteDokter(${d.id})">Hapus</button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function renderTindakanTable(data) {
+      const container = document.getElementById('tindakanTable');
+      if (!container) return;
+      if (data.length === 0) {
+        container.innerHTML = '<p>Belum ada tindakan.</p>';
+        return;
+      }
+
+      let html = `<table><thead><tr><th>ID</th><th>Nama</th><th>Deskripsi</th><th>Biaya</th><th>Aksi</th></tr></thead><tbody>`;
+      data.forEach(t => {
+        html += `<tr>
+          <td>${t.id}</td>
+          <td>${t.nama}</td>
+          <td>${t.deskripsi || '-'}</td>
+          <td>Rp ${t.biaya?.toLocaleString() || '-'}</td>
+          <td>
+            <button class="primary-btn" style="background:#f59e0b; font-size:12px; padding:4px 8px;" onclick="editTindakan(${t.id})">Edit</button>
+            <button class="primary-btn" style="background:#ef4444; font-size:12px; padding:4px 8px; margin-top:4px;" onclick="deleteTindakan(${t.id})">Hapus</button>
+          </td>
+        </tr>`;
       });
       html += '</tbody></table>';
       container.innerHTML = html;
@@ -381,15 +643,13 @@
 
     function renderJanjiTable(data) {
       const container = document.getElementById('janjiTable');
+      if (!container) return;
       if (data.length === 0) {
         container.innerHTML = '<p>Belum ada janji temu.</p>';
         return;
       }
 
-      let html = `<table><thead><tr>
-        <th>Pasien</th><th>Dokter</th><th>Tanggal</th><th>Jam</th><th>Status</th>
-      </tr></thead><tbody>`;
-
+      let html = `<table><thead><tr><th>Pasien</th><th>Dokter</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Aksi</th></tr></thead><tbody>`;
       data.forEach(j => {
         html += `<tr>
           <td>${j.pasien?.nama || 'Tidak ditemukan'}</td>
@@ -397,6 +657,36 @@
           <td>${j.tanggal}</td>
           <td>${j.jam}</td>
           <td class="status-${j.status}">${j.status}</td>
+          <td>
+            <button class="primary-btn" style="background:#f59e0b; font-size:12px; padding:4px 8px;" onclick="editJanjiTemu(${j.id})">Edit</button>
+            <button class="primary-btn" style="background:#ef4444; font-size:12px; padding:4px 8px; margin-top:4px;" onclick="deleteJanjiTemu(${j.id})">Hapus</button>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function renderRekamMedisTable(data) {
+      const container = document.getElementById('rekamMedisTable');
+      if (!container) return;
+      if (data.length === 0) {
+        container.innerHTML = '<p>Belum ada rekam medis.</p>';
+        return;
+      }
+
+      let html = `<table><thead><tr><th>ID</th><th>Pasien</th><th>Dokter</th><th>Tanggal</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody>`;
+      data.forEach(r => {
+        html += `<tr>
+          <td>${r.id}</td>
+          <td>${r.pasien?.nama || '–'}</td>
+          <td>${r.dokter?.nama || '–'}</td>
+          <td>${r.tanggal}</td>
+          <td>${r.catatan}</td>
+          <td>
+            <button class="primary-btn" style="background:#f59e0b; font-size:12px; padding:4px 8px;" onclick="editRekamMedis(${r.id})">Edit</button>
+            <button class="primary-btn" style="background:#ef4444; font-size:12px; padding:4px 8px; margin-top:4px;" onclick="deleteRekamMedis(${r.id})">Hapus</button>
+          </td>
         </tr>`;
       });
       html += '</tbody></table>';
@@ -405,6 +695,7 @@
 
     function populateDropdown(selectId, data, valueField, textField) {
       const select = document.getElementById(selectId);
+      if (!select) return;
       select.innerHTML = '';
       data.forEach(item => {
         const option = document.createElement('option');
@@ -432,12 +723,8 @@
         const res = await apiFetch('/pasien', { method: 'POST', body: JSON.stringify(data) });
         if (res.ok) {
           showMessage('pasienMessage', 'Pasien berhasil ditambahkan');
-          loadData();
-          // Reset form
-          document.getElementById('pasienNama').value = '';
-          document.getElementById('pasienTelepon').value = '';
-          document.getElementById('pasienAlamat').value = '';
-          document.getElementById('pasienLahir').value = '';
+          ['pasienNama','pasienTelepon','pasienAlamat','pasienLahir'].forEach(id => document.getElementById(id).value = '');
+          loadDataForSection('pasien');
         } else {
           const err = await res.json();
           showMessage('pasienMessage', err.message || 'Gagal menambah pasien', true);
@@ -463,12 +750,8 @@
         const result = await res.json();
         if (res.ok) {
           showMessage('dokterMessage', `Dokter berhasil ditambahkan! Password: ${result.akun.password}`);
-          loadData();
-          // Reset form
-          document.getElementById('dokterNama').value = '';
-          document.getElementById('dokterSpesialis').value = '';
-          document.getElementById('dokterTelepon').value = '';
-          document.getElementById('dokterUsername').value = '';
+          ['dokterNama','dokterSpesialis','dokterTelepon','dokterUsername'].forEach(id => document.getElementById(id).value = '');
+          loadDataForSection('dokter');
         } else {
           showMessage('dokterMessage', result.message || 'Gagal menambah dokter', true);
         }
@@ -492,9 +775,9 @@
         const res = await apiFetch('/janji-temu', { method: 'POST', body: JSON.stringify(data) });
         if (res.ok) {
           showMessage('janjiMessage', 'Janji temu berhasil dibuat');
-          loadData();
           document.getElementById('janjiTanggal').value = '';
           document.getElementById('janjiJam').value = '';
+          loadDataForSection('janji');
         } else {
           const err = await res.json();
           showMessage('janjiMessage', err.message || 'Gagal membuat janji temu', true);
@@ -518,10 +801,8 @@
         const res = await apiFetch('/tindakan', { method: 'POST', body: JSON.stringify(data) });
         if (res.ok) {
           showMessage('tindakanMessage', 'Tindakan berhasil ditambahkan');
-          loadData();
-          document.getElementById('tindakanNama').value = '';
-          document.getElementById('tindakanDeskripsi').value = '';
-          document.getElementById('tindakanBiaya').value = '';
+          ['tindakanNama','tindakanDeskripsi','tindakanBiaya'].forEach(id => document.getElementById(id).value = '');
+          loadDataForSection('tindakan');
         } else {
           const err = await res.json();
           showMessage('tindakanMessage', err.message || 'Gagal menambah tindakan', true);
@@ -544,7 +825,6 @@
         showMessage('rmMessage', 'Pasien, Dokter, Catatan, dan Tanggal wajib diisi', true);
         return;
       }
-      // Hapus null
       if (data.janji_temu_id === 'null') delete data.janji_temu_id;
       if (data.tindakan_id === 'null') delete data.tindakan_id;
 
@@ -552,9 +832,9 @@
         const res = await apiFetch('/rekam-medis', { method: 'POST', body: JSON.stringify(data) });
         if (res.ok) {
           showMessage('rmMessage', 'Rekam medis berhasil ditambahkan');
-          loadData();
           document.getElementById('rmCatatan').value = '';
           document.getElementById('rmTanggal').value = '';
+          loadDataForSection('rekam-medis');
         } else {
           const err = await res.json();
           showMessage('rmMessage', err.message || 'Gagal menambah rekam medis', true);
@@ -564,24 +844,128 @@
       }
     }
 
-    // === DOKTER ===
+    // === EDIT PLACEHOLDERS (untuk tugas akhir, cukup alert) ===
+    function editPasien(id) { alert(`Edit pasien ID ${id}`); }
+    function editDokter(id) { alert(`Edit dokter ID ${id}`); }
+    function editJanjiTemu(id) { alert(`Edit janji temu ID ${id}`); }
+    function editTindakan(id) { alert(`Edit tindakan ID ${id}`); }
+    function editRekamMedis(id) { alert(`Edit rekam medis ID ${id}`); }
+
+    // === DELETE FUNCTIONS ===
+    async function deletePasien(id) {
+      if (!confirm(`Yakin hapus pasien ID ${id}?`)) return;
+      try {
+        const res = await apiFetch(`/pasien/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showMessage('pasienMessage', 'Pasien berhasil dihapus', false);
+          loadDataForSection('pasien');
+        } else {
+          const err = await res.json();
+          showMessage('pasienMessage', err.message || 'Gagal menghapus pasien', true);
+        }
+      } catch (err) {
+        showMessage('pasienMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function deleteDokter(id) {
+      if (!confirm(`Yakin hapus dokter ID ${id}?`)) return;
+      try {
+        const res = await apiFetch(`/dokter/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showMessage('dokterMessage', 'Dokter berhasil dihapus', false);
+          loadDataForSection('dokter');
+        } else {
+          const err = await res.json();
+          showMessage('dokterMessage', err.message || 'Gagal menghapus dokter', true);
+        }
+      } catch (err) {
+        showMessage('dokterMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function deleteJanjiTemu(id) {
+      if (!confirm(`Yakin hapus janji temu ID ${id}?`)) return;
+      try {
+        const res = await apiFetch(`/janji-temu/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showMessage('janjiMessage', 'Janji temu berhasil dihapus', false);
+          loadDataForSection('janji');
+        } else {
+          const err = await res.json();
+          showMessage('janjiMessage', err.message || 'Gagal menghapus janji temu', true);
+        }
+      } catch (err) {
+        showMessage('janjiMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function deleteTindakan(id) {
+      if (!confirm(`Yakin hapus tindakan ID ${id}?`)) return;
+      try {
+        const res = await apiFetch(`/tindakan/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showMessage('tindakanMessage', 'Tindakan berhasil dihapus', false);
+          loadDataForSection('tindakan');
+        } else {
+          const err = await res.json();
+          showMessage('tindakanMessage', err.message || 'Gagal menghapus tindakan', true);
+        }
+      } catch (err) {
+        showMessage('tindakanMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    async function deleteRekamMedis(id) {
+      if (!confirm(`Yakin hapus rekam medis ID ${id}?`)) return;
+      try {
+        const res = await apiFetch(`/rekam-medis/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showMessage('rmMessage', 'Rekam medis berhasil dihapus', false);
+          loadDataForSection('rekam-medis');
+        } else {
+          const err = await res.json();
+          showMessage('rmMessage', err.message || 'Gagal menghapus', true);
+        }
+      } catch (err) {
+        showMessage('rmMessage', 'Gagal terhubung ke server', true);
+      }
+    }
+
+    // === DOKTER DASHBOARD ===
     async function loadDokterJadwal() {
       try {
         const res = await apiFetch('/janji-temu/dokter/jadwal');
         const data = await res.json();
-        const container = document.getElementById('dokterJadwalContainer');
-        const rmContainer = document.getElementById('dokterRekamMedisContainer');
-        rmContainer.classList.add('hidden');
-        
+        const container = document.getElementById('dashboardPage');
+        container.innerHTML = `
+          <div class="container">
+            <div class="sidebar">
+              <div class="sidebar-header">
+                <h2>🦷 Klinik Gigi Sehat</h2>
+                <p>Dokter Dashboard</p>
+              </div>
+              <div class="sidebar-menu">
+                <button onclick="loadDokterJadwal()">Jadwal Saya</button>
+              </div>
+              <div class="sidebar-logout">
+                <button onclick="logout()">Keluar</button>
+              </div>
+            </div>
+            <div class="main-content">
+              <header><h1>Jadwal Janji Temu Saya</h1></header>
+              <div class="card">
+                <div id="dokterJadwalTable"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        const table = document.getElementById('dokterJadwalTable');
         if (data.length === 0) {
-          container.innerHTML = '<p>Belum ada janji temu.</p>';
+          table.innerHTML = '<p>Belum ada janji temu.</p>';
           return;
         }
-
-        let html = `<h3>Jadwal Janji Temu Saya</h3><table><thead><tr>
-          <th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Status</th>
-        </tr></thead><tbody>`;
-
+        let html = `<table><thead><tr><th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Status</th></tr></thead><tbody>`;
         data.forEach(j => {
           html += `<tr>
             <td>${j.tanggal}</td>
@@ -591,26 +975,11 @@
           </tr>`;
         });
         html += '</tbody></table>';
-        container.innerHTML = html;
+        table.innerHTML = html;
       } catch (err) {
-        container.innerHTML = '<p>Gagal memuat jadwal.</p>';
-        console.error(err);
+        console.error('Gagal load jadwal dokter', err);
       }
     }
-
-    function showDokterRekamMedis() {
-      document.getElementById('dokterJadwalContainer').innerHTML = '';
-      const container = document.getElementById('dokterRekamMedisContainer');
-      container.classList.remove('hidden');
-      container.innerHTML = `
-        <h3>Rekam Medis Pasien</h3>
-        <p>Fitur ini memungkinkan dokter melihat/membuat rekam medis pasien setelah janji temu.</p>
-        <p><em>(Implementasi penuh bisa dikembangkan lebih lanjut)</em></p>
-      `;
-    }
-
-    // === INISIALISASI ===
-    // Pastikan CORS diaktifkan di backend!
   </script>
 </body>
 </html>

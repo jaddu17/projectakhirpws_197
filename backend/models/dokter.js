@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   Dokter.associate = (models) => {
     Dokter.hasMany(models.JanjiTemu, { foreignKey: 'dokter_id' });
     Dokter.hasMany(models.RekamMedis, { foreignKey: 'dokter_id' });
+    Dokter.hasOne(models.User, { foreignKey: 'dokter_id', as: 'user' });
   };
 
   return Dokter;

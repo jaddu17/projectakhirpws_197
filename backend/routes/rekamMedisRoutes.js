@@ -1,21 +1,19 @@
-// routes/rekamMedisRoutes.js
 const express = require('express');
 const router = express.Router();
+
+// ⬇️ PASTIKAN PATH INI BENAR
 const rekamMedisController = require('../controllers/rekamMedisController');
-const authApiKey = require('../middleware/authApiKey');
-const { requireAdmin, requireDokter } = require('../middleware/roleMiddleware');
 
-router.use(authApiKey);
+/**
+ * ROUTES REKAM MEDIS
+ */
+router.get('/', rekamMedisController.getAllRekamMedis);
+router.get('/:id', rekamMedisController.getRekamMedisById);
+router.get('/pasien/:pasien_id', rekamMedisController.getRekamMedisByPasien);
+router.get('/janji/:janji_temu_id', rekamMedisController.getRekamMedisByJanjiTemu);
 
-// Endpoint untuk Admin
-router.get('/', requireAdmin, rekamMedisController.getAllRekamMedis);
-router.get('/:id', requireAdmin, rekamMedisController.getRekamMedisById);
-router.post('/', requireAdmin, rekamMedisController.createRekamMedis);
-router.put('/:id', requireAdmin, rekamMedisController.updateRekamMedis);
-router.delete('/:id', requireAdmin, rekamMedisController.deleteRekamMedis);
-
-// Endpoint untuk Dokter
-router.get('/pasien/:id_pasien', requireDokter, rekamMedisController.getRekamMedisByPasien);
-router.get('/janji/:id_janji', requireDokter, rekamMedisController.getRekamMedisByJanji);
+router.post('/', rekamMedisController.createRekamMedis);
+router.put('/:id', rekamMedisController.updateRekamMedis);
+router.delete('/:id', rekamMedisController.deleteRekamMedis);
 
 module.exports = router;

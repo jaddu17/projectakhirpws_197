@@ -36,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   JanjiTemu.associate = (models) => {
-    JanjiTemu.belongsTo(models.Pasien, { foreignKey: 'pasien_id' });
-    JanjiTemu.belongsTo(models.Dokter, { foreignKey: 'dokter_id' });
+    JanjiTemu.belongsTo(models.Pasien, { foreignKey: 'pasien_id',as: 'pasien' });
+    JanjiTemu.belongsTo(models.Dokter, { foreignKey: 'dokter_id',as: 'dokter' });
     JanjiTemu.hasOne(models.RekamMedis, { foreignKey: 'janji_temu_id' });
   };
 
